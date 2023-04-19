@@ -21,7 +21,7 @@ const waitFiveSeconds = () => {
     return new Promise<void>((resolve) => {
         setTimeout(() => {
             resolve();
-        }, 10000);
+        }, 5000);
     });
 }
 
@@ -52,8 +52,8 @@ const ImageGenerator: React.FC = () => {
 
                 let imageRes;
                 while (true) {
-                    // EXPLAIN HERE WHAT WE ARE DOING HERE AND WHY?
-                    // WE ARE POLLING TO FETCH THE IMAGE IN EVERY 5 SECONDS.
+                    // Replicate is sometimes extremely slow and Heroku has a 30 second timeout. 
+                    // That is why we poll the backend every 5 seconds to check if the image has been generated.
                     await waitFiveSeconds();
                     const rawImageRes = await fetch("/image?" + new URLSearchParams({
                         'url': initRes.url,
@@ -64,6 +64,8 @@ const ImageGenerator: React.FC = () => {
                         }, method: 'GET'
                     });
                     imageRes = await rawImageRes.json();
+
+                    // TODO What if status is something else?
                     if (imageRes.status === 'succeeded') break;
                 }
 
@@ -90,7 +92,7 @@ const ImageGenerator: React.FC = () => {
         if (!isRecording) {
             stopRecording();
         }
-    }, [isRecording]);
+    }, [isRecording, startRecording, stopRecording]);
 
     return (
         <div className="image-generator">
@@ -100,18 +102,22 @@ const ImageGenerator: React.FC = () => {
                 color="primary"
                 sx={{ borderRadius: 10 }}
                 startIcon={<FontAwesomeIcon icon={isRecording ? faStop : faMicrophoneAlt} />}
-                variant="contained" name="record" onClick={handleOnRecord}>{isRecording ?
+                variant="contained" name="record" onClick={handleOnRecord}>
+                {isRecording ?
                     'Pysäytä'
                     :
                     'Puhu'
-                }</Button>
+                }
+            </Button>
             <Button
+                disabled={!mediaBlobUrl}
                 startIcon={<FontAwesomeIcon icon={faUserAstronaut} />}
                 variant="contained"
                 color="success"
                 onClick={handleOnSubmit}
                 sx={{ borderRadius: 10 }}
-            >Luo kuva
+            >
+                Luo kuva
             </Button>
             {isLoading &&
                 <BounceLoader
@@ -124,7 +130,7 @@ const ImageGenerator: React.FC = () => {
             {error && <div>{error}</div>}
             {imageUrl &&
                 <>
-                    <img src={imageUrl} className="image-generator__image" />
+                    <img src={imageUrl} className="image-generator__image" alt="Puheen perusteella luotu kuva" />
                     <Button
                         variant="outlined"
                         color="secondary"
@@ -134,7 +140,9 @@ const ImageGenerator: React.FC = () => {
                         <WhatsappShareButton
                             url={imageUrl}
                             title="Katso, tein tämän kuvan tekoälyllä!"
-                        >Jaa kuva</WhatsappShareButton>
+                        >
+                            Jaa kuva
+                        </WhatsappShareButton>
                     </Button>
                 </>
             }
