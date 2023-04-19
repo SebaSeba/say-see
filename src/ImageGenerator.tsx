@@ -1,29 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import BounceLoader from "react-spinners/BounceLoader";
-import './ImageGenerator.css';
 import { useReactMediaRecorder } from "react-media-recorder";
-import { WhatsappShareButton, WhatsappIcon } from 'react-share';
-import Button from '@mui/material/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrophoneAlt, faStop, faUserAstronaut } from '@fortawesome/free-solid-svg-icons';
-
-const blobToBase64 = (blob: Blob) => {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = function () {
-            resolve(reader.result);
-        };
-    });
-};
-
-const waitFiveSeconds = () => {
-    return new Promise<void>((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, 5000);
-    });
-}
+import { blobToBase64, waitFiveSeconds } from './ImageGenerator.helpers';
+import TalkButton from './ControlButtons/TalkButton';
+import './ImageGenerator.css';
+import GenerateImageButton from './ControlButtons/GenerateImageButton';
+import ShareInWhatsappButton from './ControlButtons/ShareInWhatsAppButton';
 
 const ImageGenerator: React.FC = () => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -34,7 +16,7 @@ const ImageGenerator: React.FC = () => {
         useReactMediaRecorder({ audio: true });
 
 
-    const handleOnSubmit = async () => {
+    const generateImage = async () => {
         try {
             if (mediaBlobUrl) {
                 let blob = await fetch(mediaBlobUrl).then(r => r.blob());
@@ -53,7 +35,7 @@ const ImageGenerator: React.FC = () => {
                 let imageRes;
                 while (true) {
                     // Replicate is sometimes extremely slow and Heroku has a 30 second timeout. 
-                    // That is why we poll the backend every 5 seconds to check if the image has been generated.
+                    // That is why we poll our backend every 5 seconds to check if the image has been generated.
                     await waitFiveSeconds();
                     const rawImageRes = await fetch("/image?" + new URLSearchParams({
                         'url': initRes.url,
@@ -80,16 +62,11 @@ const ImageGenerator: React.FC = () => {
         }
     }
 
-    const handleOnRecord = async () => {
-        setIsRecording(!isRecording);
-    }
-
     useEffect(() => {
         if (isRecording) {
             setError(null);
             startRecording();
-        }
-        if (!isRecording) {
+        } else {
             stopRecording();
         }
     }, [isRecording, startRecording, stopRecording]);
@@ -97,28 +74,8 @@ const ImageGenerator: React.FC = () => {
     return (
         <div className="image-generator">
             <div className='title'>Mitä haluaisit nähdä?</div>
-            <Button
-                className='talk-button'
-                color="primary"
-                sx={{ borderRadius: 10 }}
-                startIcon={<FontAwesomeIcon icon={isRecording ? faStop : faMicrophoneAlt} />}
-                variant="contained" name="record" onClick={handleOnRecord}>
-                {isRecording ?
-                    'Pysäytä'
-                    :
-                    'Puhu'
-                }
-            </Button>
-            <Button
-                disabled={!mediaBlobUrl}
-                startIcon={<FontAwesomeIcon icon={faUserAstronaut} />}
-                variant="contained"
-                color="success"
-                onClick={handleOnSubmit}
-                sx={{ borderRadius: 10 }}
-            >
-                Luo kuva
-            </Button>
+            <TalkButton setIsRecording={setIsRecording} isRecording={isRecording} />
+            <GenerateImageButton onClick={generateImage} disabled={!mediaBlobUrl} />
             {isLoading &&
                 <BounceLoader
                     loading={isLoading}
@@ -131,19 +88,7 @@ const ImageGenerator: React.FC = () => {
             {imageUrl &&
                 <>
                     <img src={imageUrl} className="image-generator__image" alt="Puheen perusteella luotu kuva" />
-                    <Button
-                        variant="outlined"
-                        color="secondary"
-                        sx={{ borderRadius: 10 }}
-                        startIcon={<WhatsappIcon round size={32} className='whatsapp-icon' />}
-                    >
-                        <WhatsappShareButton
-                            url={imageUrl}
-                            title="Katso, tein tämän kuvan tekoälyllä!"
-                        >
-                            Jaa kuva
-                        </WhatsappShareButton>
-                    </Button>
+                    <ShareInWhatsappButton imageUrl={imageUrl} />
                 </>
             }
         </div>
