@@ -10,7 +10,7 @@ type Props = {
 
 const TalkButton: React.FC<Props> = ({ isRecording, setIsRecording }) => (
     <Button
-        className='talk-button'
+        className="talk-button"
         color="primary"
         sx={{ borderRadius: 10 }}
         startIcon={<FontAwesomeIcon icon={isRecording ? faStop : faMicrophoneAlt} />}

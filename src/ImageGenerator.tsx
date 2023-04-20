@@ -47,12 +47,12 @@ const ImageGenerator: React.FC = () => {
                     });
                     imageRes = await rawImageRes.json();
 
-                    // TODO What if status is something else?
                     if (imageRes.status === 'succeeded') break;
                 }
-
+                
                 setImageUrl(imageRes.url);
             } else {
+                // TODO Error handling
                 console.log('audioBlob is null');
             }
             setIsLoading(false);
@@ -73,7 +73,7 @@ const ImageGenerator: React.FC = () => {
 
     return (
         <div className="image-generator">
-            <div className='title'>Mitä haluaisit nähdä?</div>
+            <div className="title">Mitä haluaisit nähdä?</div>
             <TalkButton setIsRecording={setIsRecording} isRecording={isRecording} />
             <GenerateImageButton onClick={generateImage} disabled={!mediaBlobUrl} />
             {isLoading &&
@@ -81,7 +81,7 @@ const ImageGenerator: React.FC = () => {
                     loading={isLoading}
                     size={50}
                     color="#36D7B7"
-                    className='loading-indicator'
+                    className="loading-indicator"
                 />
             }
             {error && <div>{error}</div>}

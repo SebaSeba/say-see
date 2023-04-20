@@ -11,7 +11,7 @@ const ShareInWhatsappButton: React.FC<Props> = ({ imageUrl }) => (
         variant="outlined"
         color="secondary"
         sx={{ borderRadius: 10 }}
-        startIcon={<WhatsappIcon round size={32} className='whatsapp-icon' />}
+        startIcon={<WhatsappIcon round size={32} className="whatsapp-icon" />}
     >
         <WhatsappShareButton
             url={imageUrl}
