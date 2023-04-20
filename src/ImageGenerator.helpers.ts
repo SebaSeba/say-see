@@ -8,10 +8,10 @@ export const blobToBase64 = (blob: Blob) => {
     });
 };
 
-export const waitFiveSeconds = () => {
+export const waitTwoSeconds = () => {
     return new Promise<void>((resolve) => {
         setTimeout(() => {
             resolve();
-        }, 5000);
+        }, 2000);
     });
 }

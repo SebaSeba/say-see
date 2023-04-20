@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BounceLoader from "react-spinners/BounceLoader";
 import { useReactMediaRecorder } from "react-media-recorder";
-import { blobToBase64, waitFiveSeconds } from './ImageGenerator.helpers';
+import { blobToBase64, waitTwoSeconds } from './ImageGenerator.helpers';
 import TalkButton from './ControlButtons/TalkButton';
 import './ImageGenerator.css';
 import GenerateImageButton from './ControlButtons/GenerateImageButton';
@@ -19,26 +19,27 @@ const ImageGenerator: React.FC = () => {
     const generateImage = async () => {
         try {
             if (mediaBlobUrl) {
-                let blob = await fetch(mediaBlobUrl).then(r => r.blob());
-                const b64 = await blobToBase64(blob);
+                let recordedBlob = await fetch(mediaBlobUrl).then(r => r.blob());
+                const recordedBase64 = await blobToBase64(recordedBlob);
                 setImageUrl(null);
                 setIsLoading(true);
 
-                const rawInitRes = await fetch("/transcribe", {
+                const rawInitTranscribingRes = await fetch("/transcribe", {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
-                    }, method: 'POST', body: JSON.stringify({ blobAsB64: b64 })
+                    }, method: 'POST', body: JSON.stringify({ blobAsB64: recordedBase64 })
                 });
-                const initRes = await rawInitRes.json();
+                const initTranscribingRes = await rawInitTranscribingRes.json();
 
                 let imageRes;
                 while (true) {
                     // Replicate is sometimes extremely slow and Heroku has a 30 second timeout. 
-                    // That is why we poll our backend every 5 seconds to check if the image has been generated.
-                    await waitFiveSeconds();
+                    // That is why we poll the backend every 2 seconds to check if the image has been generated.
+                    // Backend returns the response immediately.
+                    await waitTwoSeconds();
                     const rawImageRes = await fetch("/image?" + new URLSearchParams({
-                        'url': initRes.url,
+                        'checkIfTranscribingFinishedUrl': initTranscribingRes.checkIfTranscribingFinishedUrl,
                     }), {
                         headers: {
                             'Accept': 'application/json',
@@ -49,7 +50,7 @@ const ImageGenerator: React.FC = () => {
 
                     if (imageRes.status === 'succeeded') break;
                 }
-                
+
                 setImageUrl(imageRes.url);
             } else {
                 // TODO Error handling
