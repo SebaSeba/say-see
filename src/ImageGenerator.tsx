@@ -36,7 +36,6 @@ const ImageGenerator: React.FC = () => {
                 while (true) {
                     // Replicate is sometimes extremely slow and Heroku has a 30 second timeout. 
                     // That is why we poll the backend every 2 seconds to check if the image has been generated.
-                    // Backend returns the response immediately.
                     await waitTwoSeconds();
                     const rawImageRes = await fetch("/image?" + new URLSearchParams({
                         'checkIfTranscribingFinishedUrl': initTranscribingRes.checkIfTranscribingFinishedUrl,
