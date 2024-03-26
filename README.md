@@ -1,46 +1,12 @@
 # Say See frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Say See is a (outdated) mini app developed at the end of year 2022. It was made for my relatives' kids. It leverages multiple third-party AI services.
 
-## Available Scripts
+The main feature is that you speak to it in any language using your device's microphone and it will generate an image based on what you said. The image can be shared to WhatsApp with a click of a button.
 
-In the project directory, you can run:
+The app leverages Whisper automatic speech recognition AI model for audio to text speech transcription. Whisper AI model is used through Replicate's API.
+After transcribing makes a call to DeepL API for AI enhanced translation to English.
+At the end it calls OpenAI's Dalle-2 API which generates an image based on the transcribed and translated text.
+The image is then shown in the UI.
 
-### `yarn start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3001](http://localhost:3001) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+[Link to Say See backend repository](https://github.com/SebaSeba/say-see-backend)
