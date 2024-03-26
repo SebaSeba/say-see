@@ -1,6 +1,6 @@
 # Say See frontend
 
-Say See is a (outdated) mini app developed at the end of year 2022. It was made for my relatives' kids. It leverages multiple third-party AI services.
+Say See is an (outdated) mini app developed at the end of year 2022. It was made for my relatives' kids. It leverages multiple third-party AI services.
 
 The main feature is that you speak to it in any language using your device's microphone and it will generate an image based on what you said. The image can be shared to WhatsApp with a click of a button.
 
